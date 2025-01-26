@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: odahriz <odahriz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 09:31:05 by odahriz           #+#    #+#             */
-/*   Updated: 2025/01/27 00:27:21 by odahriz          ###   ########.fr       */
+/*   Updated: 2025/01/27 00:28:49 by odahriz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*last_line(char **line)
 {
@@ -70,29 +70,29 @@ ssize_t	read_line(int fd, char **line)
 
 char	*get_next_line(int fd)
 {
-	static char	*line;
+	static char	*line[1024];
 	ssize_t		i;
 
 	i = 0;
-	if (!line)
+	if (!line[fd] && fd >= 0)
 	{
-		line = malloc(1);
-		line[0] = '\0';
+		line[fd] = malloc(1);
+		line[fd][0] = '\0';
 	}
 	while (1)
 	{
-		if (ft_strchr(line, '\n'))
-			return (return_line(&line));
-		if (!ft_strchr(line, '\n'))
-			i = read_line(fd, &line);
+		if (ft_strchr(line[fd], '\n'))
+			return (return_line(&line[fd]));
+		if (!ft_strchr(line[fd], '\n'))
+			i = read_line(fd, &line[fd]);
 		if (i <= 0)
 		{
 			if (i == -1)
-				return (free(line), NULL);
-			if (*line)
-				return (last_line(&line));
+				return (free(line[fd]), NULL);
+			if (*line[fd])
+				return (last_line(&line[fd]));
 			break ;
 		}
 	}
-	return (free(line), NULL);
+	return (free(line[fd]), line[fd] = NULL, NULL);
 }
